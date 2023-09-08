@@ -139,7 +139,7 @@ train_and_test(model_slow_small)
 
 # MAGIC %md
 # MAGIC
-# MAGIC ## Conclusion
+# MAGIC ## Summary
 # MAGIC
 # MAGIC We learnt that tracking the models, (training) parameters and (test) performance using **pure python** is cumbersome and error-prone. 
 

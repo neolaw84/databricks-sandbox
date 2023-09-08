@@ -61,7 +61,7 @@ def train_and_test_with_mlflow(model, run_name, tr_X = X_tr, tr_label = y_tr_lab
     with mlflow.start_run(run_name=run_name):
         model.fit(tr_X, tr_label)
         y_pred = model.predict(ts_X)
-        # change 3 : log the metrics
+        # change 3 : log the metrics (instead of or in addition to print)
         mlflow.log_metric(key="precision", value=metrics.precision_score(ts_label, y_pred))
         # print (f"Precision : {metrics.precision_score(ts_label, y_pred)}")
         mlflow.log_metric(key="recall", value=metrics.recall_score(ts_label, y_pred))
@@ -97,8 +97,8 @@ with open("../configurations/conda_env.yaml", "wt") as f:
 
 def train_and_test_with_mlflow(model, run_name, params, tr_X = X_tr, tr_label = y_tr_label, ts_X = X_ts, ts_label = y_ts_label):
     # change 2 : use mlflow.start_run context manager
-    with mlflow.start_run(run_name=run_name):
-        # change 3.2 log the parameters
+    with mlflow.start_run(run_name=run_name) as run:
+        # change 3.2 : log the parameters
         mlflow.log_params(params)
 
         # change 3.3 log the training dataset
@@ -107,35 +107,39 @@ def train_and_test_with_mlflow(model, run_name, params, tr_X = X_tr, tr_label = 
 
         model.fit(tr_X, tr_label)
         y_pred = model.predict(ts_X)
-        # change 3.1 log the metrics
+        # change 3.1 : log the metrics
         mlflow.log_metrics({
             "precision" : metrics.precision_score(ts_label, y_pred),
             "recall" : metrics.recall_score(ts_label, y_pred),
             "f1" : metrics.f1_score(ts_label, y_pred)
         })
         
-        # change 3.4 log the model itself
+        # change 3.4 : log the model itself
         mlflow.sklearn.log_model(
             model, run_name,
             conda_env="../configurations/conda_env.yaml",
             signature=mlflow.models.infer_signature(tr_X, y_pred)
         )
 
-# COMMAND ----------
-
-train_and_test_with_mlflow(model_log_reg, run_name="log_reg_2", params=param_log_reg)
-
-# COMMAND ----------
-
-train_and_test_with_mlflow(model_svm, run_name="svm", params=param_svm)
+        # change 4 : record the run_id
+        run_id = run.info.run_id
+    return run_id
 
 # COMMAND ----------
 
-train_and_test_with_mlflow(model_fast_large, run_name="gbm_fast_large", params=param_fast_large)
+run_id_log_reg = train_and_test_with_mlflow(model_log_reg, run_name="log_reg_2", params=param_log_reg)
 
 # COMMAND ----------
 
-train_and_test_with_mlflow(model_slow_small, run_name="gbm_slow_small", params=param_slow_small)
+run_id_svm = train_and_test_with_mlflow(model_svm, run_name="svm", params=param_svm)
+
+# COMMAND ----------
+
+run_id_gbm_fast_large = train_and_test_with_mlflow(model_fast_large, run_name="gbm_fast_large", params=param_fast_large)
+
+# COMMAND ----------
+
+run_id_gbm_slow_small = train_and_test_with_mlflow(model_slow_small, run_name="gbm_slow_small", params=param_slow_small)
 
 # COMMAND ----------
 
@@ -171,7 +175,33 @@ with mlflow.start_run(run_name="neural_network"):
 
 # MAGIC %md
 # MAGIC
-# MAGIC ## Conclusion
+# MAGIC ## Log the `run_id`
+# MAGIC
+# MAGIC Now, let us log the run_ids for cases when we want to register and serve one of these models.
+
+# COMMAND ----------
+
+with open("../configurations/run_ids.yaml", "wt") as f:
+    yaml.dump({
+        "run_id" : {
+            "gbm_fast_large": run_id_gbm_fast_large,
+            "gbm_slow_small": run_id_gbm_slow_small,
+            "log_reg": run_id_log_reg,
+            "svm": run_id_svm
+        }
+    }, f)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
+# MAGIC > Do not worry if you miss this step, run_ids are also accessible from databricks UI.
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
+# MAGIC ## Summary
 # MAGIC
 # MAGIC We learnt that tracking the models, (training) parameters and (test) performance as well as datasets using **`mlflow`** is easy and straightforward. It reduces errors and is less cumbersome. Finally, it facilitates recording of experiments with minimum changes to workflows. 
 
