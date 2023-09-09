@@ -2,6 +2,8 @@
 # MAGIC %md
 # MAGIC
 # MAGIC # 03 Model Registration
+# MAGIC
+# MAGIC In this notebook, we will **register** a developed model in the unity catalog. This will enable us to **serve** the model as an API end-point on `databricks` platform.
 
 # COMMAND ----------
 
@@ -78,6 +80,12 @@ schema = "default"
 model_name = "gbm_fast_large"
 mlflow.set_registry_uri("databricks-uc")
 mlflow.register_model(f"runs:/{run_id}/{SELECTED_MODEL}", f"{catalog}.{schema}.{model_name}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
+# MAGIC > Databricks recommend to use three level namespace (i.e. `catalog`, `schema` and `model_name`) to be used to identify which stage (dev/staging/prod) the model is in. We will update after we have an update on the naming/notation convention.
 
 # COMMAND ----------
 
