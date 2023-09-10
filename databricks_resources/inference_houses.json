@@ -1,0 +1,26 @@
+{
+    "run_as": {
+        "user_name": "neolaw@gmail.com"
+    },
+    "name": "inference_houses",
+    "email_notifications": {
+        "no_alert_for_skipped_runs": false
+    },
+    "webhook_notifications": {},
+    "timeout_seconds": 0,
+    "max_concurrent_runs": 1,
+    "tasks": [
+        {
+            "task_key": "inference_houses",
+            "run_if": "ALL_SUCCESS",
+            "notebook_task": {
+                "notebook_path": "/Repos/neolaw@gmail.com/databricks-sandbox/inference/06_inferencing_in_batch",
+                "source": "WORKSPACE"
+            },
+            "existing_cluster_id": "0906-052535-pjpwzdf3",
+            "timeout_seconds": 0,
+            "email_notifications": {}
+        }
+    ],
+    "format": "MULTI_TASK"
+}
