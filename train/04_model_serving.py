@@ -41,7 +41,7 @@ import json
 
 # MAGIC %md
 # MAGIC
-# MAGIC **get the `ACCESS_TOKEN` back** 
+# MAGIC **get the `ACCESS_TOKEN`** 
 # MAGIC
 # MAGIC Now, we will retrieve the `ACCESS_TOKEN` using `dbutils`. 
 # MAGIC
