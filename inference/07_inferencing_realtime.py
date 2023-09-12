@@ -37,7 +37,7 @@ from sklearn import datasets, model_selection
 
 # COMMAND ----------
 
-DATABRICKS_URL="https://dbc-188baba4-9c32.cloud.databricks.com/"
+DATABRICKS_URL="https://dbc-4e97af6e-19e2.cloud.databricks.com/"
 ACCESS_TOKEN = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().getOrElse(None)
 assert ACCESS_TOKEN
 
